@@ -10,4 +10,6 @@ public class Solution2Q2Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_solution2_q2);
     }
+
+
 }

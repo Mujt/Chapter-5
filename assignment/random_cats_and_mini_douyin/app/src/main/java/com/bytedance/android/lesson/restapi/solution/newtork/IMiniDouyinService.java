@@ -1,7 +1,11 @@
 package com.bytedance.android.lesson.restapi.solution.newtork;
 
+import com.bytedance.android.lesson.restapi.solution.bean.Cat;
+import com.bytedance.android.lesson.restapi.solution.bean.Feed;
 import com.bytedance.android.lesson.restapi.solution.bean.FeedResponse;
 import com.bytedance.android.lesson.restapi.solution.bean.PostVideoResponse;
+
+import java.util.List;
 
 import okhttp3.MultipartBody;
 import retrofit2.Call;
@@ -28,6 +32,13 @@ public interface IMiniDouyinService {
     //    .com/obj/developer-baas/baas/tt7217xbo2wz3cem41/a8efa55c5c22de69_1560563154288.mp4",
     //    "success": true
     //}
+    @Multipart
+    @POST("/mini_douyin/invoke/video")
+    Call<PostVideoResponse> createVideo(
+      @Query("student_id") String param1,
+      @Query("user_name") String param2,
+      @Part MultipartBody.Part file1, @Part MultipartBody.Part file2
+    );
 
     // TODO-C2 (8) Implement your MiniDouyin Feed Request here, url: (GET) http://test.androidcamp.bytedance.com/mini_douyin/invoke/video
     // response
@@ -50,4 +61,6 @@ public interface IMiniDouyinService {
     //    ],
     //    "success":true
     //}
+    @GET("/mini_douyin/invoke/video")
+    Call<FeedResponse> getFeed();
 }

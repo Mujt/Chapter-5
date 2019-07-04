@@ -9,7 +9,5 @@ public class Solution2Q1Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_solution2_q1);
-
-
     }
 }

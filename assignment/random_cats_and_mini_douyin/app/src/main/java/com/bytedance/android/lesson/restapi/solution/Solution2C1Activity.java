@@ -1,5 +1,6 @@
 package com.bytedance.android.lesson.restapi.solution;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -12,9 +13,16 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bytedance.android.lesson.restapi.solution.bean.Cat;
+import com.bytedance.android.lesson.restapi.solution.newtork.ICatService;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.support.v7.widget.RecyclerView.Adapter;
 import static android.support.v7.widget.RecyclerView.ViewHolder;
@@ -47,8 +55,8 @@ public class Solution2C1Activity extends AppCompatActivity {
                 ImageView iv = (ImageView) viewHolder.itemView;
 
                 // TODO-C1 (4) Uncomment these 2 lines, assign image url of Cat to this url variable
-//                String url = mCats.get(i).;
-//                Glide.with(iv.getContext()).load(url).into(iv);
+                String url = mCats.get(i).getUrl();
+                Glide.with(iv.getContext()).load(url).into(iv);
             }
 
             @Override public int getItemCount() {
@@ -63,14 +71,44 @@ public class Solution2C1Activity extends AppCompatActivity {
         }
     }
 
-    public void requestData(View view) {
+    public void requestData(View view) throws IOException, ExecutionException, InterruptedException {
         mBtn.setText(R.string.requesting);
         mBtn.setEnabled(false);
 
+
+        DownLoadPic download = new DownLoadPic();
+        download.execute();
+        if (download.get() == null) {
+            restoreBtn();
+        } else {
+            restoreBtn();
+            loadPics(download.get());
+        }
         // TODO-C1 (3) Send request for 5 random cats here, don't forget to use {@link retrofit2.Call#enqueue}
         // Call restoreBtn() and loadPics(response.body()) if success
         // Call restoreBtn() if failure
+    }
 
+
+    class DownLoadPic extends AsyncTask<String,Integer,List<Cat>> {
+
+        @Override
+        protected List<Cat> doInBackground(String... strings) {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl("https://api.thecatapi.com/")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+
+            Response<List<Cat>> response = null;
+            try {
+                response = retrofit.create(ICatService.class)
+                        .getCall().execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            //System.out.println(response);
+            return response == null? null : response.body();
+        }
     }
 
     private void loadPics(List<Cat> cats) {
